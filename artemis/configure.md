@@ -58,44 +58,54 @@ Inside the `<addresses>` block, add the following:
 
          <!-- User defined -->
 
+         <address name="/queue/epicqueue">
+          <anycast>
+                  <queue name="/queue/epicqueue" />
+          </anycast>
+         </address>
+
+         <address name="/topic/epictopic">
+          <multicast/>
+         </address>
+
          <!-- tf.slices: PanDA -> iDDS -->
-         <address name="tf.slices">
+         <address name="/queue/tf.slices">
            <anycast>
-             <queue name="tf.slices" />
+             <queue name="/queue/tf.slices"/>
            </anycast>
          </address>
 
          <!-- panda.transformer.slices: iDDS -> Transformer -->
-         <address name="panda.transformer.slices">
+         <address name="/queue/panda.transformer.slices">
            <anycast>
-             <queue name="panda.transformer.slices" />
+             <queue name="/queue/panda.transformer.slices" />
            </anycast>
          </address>
 
          <!-- panda.transformer: iDDS -> Transformer (topic) -->
-         <address name="panda.transformer">
+         <address name="/topic/panda.transformer">
            <multicast/>
          </address>
 
          <!-- panda.results: Transformer -> PA/iDDS -->
-         <address name="panda.results">
+         <address name="/topic/panda.results">
            <multicast>
-             <queue name="panda.results.sub1" />
-             <queue name="panda.results.sub2" />
+             <queue name="/queue/panda.results.sub1" />
+             <queue name="/queue/panda.results.sub2" />
            </multicast>
          </address>
 
          <!-- panda.harvester: iDDS -> Harvester -->
-         <address name="panda.harvester">
+         <address name="/queue/panda.harvester">
            <anycast>
-             <queue name="panda.harvester" />
+             <queue name="/queue/panda.harvester" />
            </anycast>
          </address>
 
          <!-- panda.jobs: iDDS -> PanDA -->
-         <address name="panda.jobs">
+         <address name="/queue/panda.jobs">
            <anycast>
-             <queue name="panda.jobs" />
+             <queue name="/queue/panda.jobs" />
            </anycast>
          </address>
 
@@ -307,3 +317,34 @@ To restrict producers and consumers to specific queues, configure security roles
 ```
 
 Then define these roles and users in `artemis-users.properties` and `artemis-roles.properties`.
+
+## Step 7: Test with stomp
+
+Producer:
+
+```
+import stomp
+
+conn = stomp.Connection([('localhost', 61612)])
+conn.connect('admin', 'admin', wait=True)
+for i in range(5):
+    conn.send(destination='/queue/tf.slices', body=f'Message {i}')
+# import time; time.sleep(999)
+conn.disconnect()
+```
+
+Consumer:
+```
+import stomp
+
+class Listener(stomp.ConnectionListener):
+    def on_message(self, frame):
+        print("[tf.slices]", frame.body)
+
+conn = stomp.Connection([('localhost', 61612)])
+conn.set_listener('', Listener())
+conn.connect('admin', 'admin', wait=True)
+conn.subscribe(destination='/queue/tf.slices', id='2', ack='auto')
+import time; time.sleep(999)
+```
+
