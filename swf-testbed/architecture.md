@@ -89,16 +89,16 @@ graph LR
     ProcAgent -->|6| PanDA
     FastMon -.->|7| DAQ
 
-    iDDS -->|8| PanDA1
-    PanDA1 -->|8| Pilot
-    FastMon -->|9| ActiveMQ
-    ActiveMQ -.->|9| Pilot
-    
     ActiveMQ -.-> Monitor
     Monitor --> PostgreSQL
     Monitor --> WebUI
     Monitor --> RestAPI
     Monitor --> MCP
+
+    iDDS -->|8| PanDA1
+    PanDA1 -->|8| Pilot
+    FastMon -.->|9| ActiveMQ
+    ActiveMQ -.->|9| Pilot
 ```
 
 **Workflow Steps:**
