@@ -56,6 +56,7 @@ graph LR
 graph LR
     DAQ[E1/E2 Fast Monitor]
     PanDA[PanDA]
+    PanDA1[PanDA]
     iDDS[iDDS]
     Pilot[PanDA-Pilot-Transformer]
     Rucio[Rucio]
@@ -88,8 +89,8 @@ graph LR
     ProcAgent -->|6| PanDA
     FastMon -.->|7| DAQ
 
-    iDDS -->|8| PanDA
-    PanDA -->|8| Pilot
+    iDDS -->|8| PanDA1
+    PanDA1 -->|8| Pilot
     FastMon -->|9| ActiveMQ
     ActiveMQ -.->|9| Pilot
     
