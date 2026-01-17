@@ -97,7 +97,7 @@ graph LR
 
     iDDS -->|8| PanDA1
     PanDA1 -->|8| Pilot
-    FastMon -.->|9| ActiveMQ
+    FastProc -.->|9| ActiveMQ
     ActiveMQ -.->|9| Pilot
 ```
 
@@ -108,6 +108,6 @@ graph LR
 4. **STF Available** - daqsim-agent generates a broadcast message that a new STF data file is available
 5. **STF Transfer** - data-agent sees the message and initiates Rucio registration and transfer of the STF file to E1 facilities
 6. **STF Processing** - processing-agent sees the new STF file in the dataset and transferred to the E1 by Rucio, and initiates a PanDA job to process the STF
-7. **Fast Monitoring** - fastmon-agent sees the broadcast message that a new STF data file is available and performs a partial read (slices) to inject a data sample into E1/E2 fast monitoring
+7. **Fast Monitoring** - fastmon-agent sees the broadcast message that a new STF data file is available and performs a partial read to inject a data sample into E1/E2 fast monitoring
 8. **PanDA worker** - iDDS sees the run start message and creates PanDA transformer workers (A transformer in running PanDA Pilots)
-9. **TF slice** - fastmon-agent generates TF slices and distributes them to ActiveMQ. The transformer in PanDA Pilot consumes TF slice messages to process the payloads.
+9. **TF slice** - fast-processing-agent generates TF slices and distributes them to ActiveMQ. The transformer in PanDA Pilot consumes TF slice messages to process the payloads.
