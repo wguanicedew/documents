@@ -111,3 +111,59 @@ graph LR
 7. **Fast Monitoring** - fastmon-agent sees the broadcast message that a new STF data file is available and performs a partial read to inject a data sample into E1/E2 fast monitoring
 8. **PanDA worker** - iDDS sees the run start message and creates PanDA transformer workers (A transformer in running PanDA Pilots)
 9. **TF slice** - fast-processing-agent generates TF slices and distributes them to ActiveMQ. The transformer in PanDA Pilot consumes TF slice messages to process the payloads.
+
+## 3. flow
+
+```mermaid
+flowchart TB
+%% ---------- Styles ----------
+classDef blue fill:#e8f0fe,stroke:#3b82f6,stroke-width:2px,color:#111;
+classDef green fill:#eaf7ea,stroke:#22c55e,stroke-width:2px,color:#111;
+classDef orange fill:#fff3e6,stroke:#f97316,stroke-width:2px,color:#111;
+classDef purple fill:#f3e8ff,stroke:#a855f7,stroke-width:2px,color:#111;
+classDef gray fill:#f3f4f6,stroke:#9ca3af,stroke-width:2px,color:#111;
+
+%% ---------- Main pipeline ----------
+A[DAQ Simulator]:::blue --> B[STF]:::orange --> C[Data Agent]:::green --> D[FastMon Agent]:::green --> E[STF Sample]:::orange --> F[Fast Processing Agent]:::green
+
+%% ---------- DB ----------
+DB((Testbed\nDB)):::blue
+C -. "STF record" .-> DB
+D -. "sample records" .-> DB
+F -. "slice bookkeeping" .-> DB
+
+%% ---------- TF slices / Workers ----------
+subgraph SLICES["TF Slices"]
+direction LR
+S1[slice 1]:::gray
+S2[slice 2]:::gray
+S3[slice 3]:::gray
+Sx[...]:::gray
+end
+style SLICES fill:#fff7ed,stroke:#f97316,stroke-width:2px,rx:10,ry:10
+
+F --> SLICES
+subgraph W["PanDA Workers"]
+direction LR
+W1[Worker 1\nEICrecon]:::purple
+W2[Worker 2\nEICrecon]:::purple
+W3[Worker 3\nEICrecon]:::purple
+Wx[...]:::purple
+end
+style W fill:#f5f3ff,stroke:#7c3aed,stroke-width:2px,rx:10,ry:10
+
+SLICES --> W --> OUT[Reconstruction Output]:::gray --> ANA[Analytics]:::orange
+
+%% ---------- IDDS/PanDA ----------
+IDDS[IDDS\nWorkflow Mgmt]:::green --> PANDA[PanDA\nWorkload Mgmt]:::green
+F --> IDDS
+PANDA --> W
+
+%% ---------- Legend (manual) ----------
+subgraph LEG["Legend"]
+direction TB
+L1["→ control flow"]:::gray
+L2["- - → records"]:::gray
+end
+style LEG fill:#ffffff,stroke:#d1d5db,stroke-width:1px,rx:10,ry:10
+```
