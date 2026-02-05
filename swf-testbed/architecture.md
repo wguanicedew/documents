@@ -76,7 +76,6 @@ graph LR
     ActiveMQ -->|1| DataAgent
     ActiveMQ -->|1| ProcAgent
     ActiveMQ -->|1| FastProc
-    FastProc -->|1| iDDS
     DataAgent -->|2| Rucio
     ProcAgent -->|3| PanDA
 
@@ -86,8 +85,10 @@ graph LR
     ActiveMQ -->|4| FastMon
 
     DataAgent -->|5| Rucio
-    ProcAgent -->|6| PanDA
-    FastMon -.->|7| DAQ
+    ProcAgent -->|6| ActiveMQ
+    ActiveMQ -->|6| iDDS
+    ProcAgent -->|7| PanDA
+    FastMon -.->|8| DAQ
 
     ActiveMQ -.-> Monitor
     Monitor --> PostgreSQL
@@ -95,10 +96,10 @@ graph LR
     Monitor --> RestAPI
     Monitor --> MCP
 
-    iDDS -->|8| PanDA1
-    PanDA1 -->|8| Pilot
-    FastProc -.->|9| ActiveMQ
-    ActiveMQ -.->|9| Pilot
+    iDDS -->|9| PanDA1
+    PanDA1 -->|9| Pilot
+    FastProc -.->|10| ActiveMQ
+    ActiveMQ -.->|10| Pilot
 ```
 
 **Workflow Steps:**
