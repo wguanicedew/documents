@@ -85,10 +85,8 @@ graph LR
     ActiveMQ -->|4| FastMon
 
     DataAgent -->|5| Rucio
-    ProcAgent -->|6| ActiveMQ
-    ActiveMQ -->|6| iDDS
-    ProcAgent -->|7| PanDA
-    FastMon -.->|8| DAQ
+    ProcAgent -->|6| PanDA
+    FastMon -.->|7| DAQ
 
     ActiveMQ -.-> Monitor
     Monitor --> PostgreSQL
@@ -96,6 +94,8 @@ graph LR
     Monitor --> RestAPI
     Monitor --> MCP
 
+    FastProc -->|8| ActiveMQ
+    ActiveMQ -->|8| iDDS
     iDDS -->|9| PanDA1
     PanDA1 -->|9| Pilot
     FastProc -.->|10| ActiveMQ
